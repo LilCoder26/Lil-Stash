@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lil Stash</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Oswald", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: #000;
+      color: #ACF034;
+    }
+
+    header {
+      padding: 24px 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 2.4rem;
+    }
+
+    .top-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    #time-box {
+      padding: 10px 15px;
+      border-radius: 20px;
+      background: #111;
+      color: #ACF034;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    #search-form {
+      display: flex;
+      width: min(400px, 90vw);
+      height: 44px;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #28282b;
+    }
+
+    #query {
+      flex: 1;
+      min-width: 0;
+      padding: 0 14px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #ACF034;
+      font-size: 1rem;
+    }
+
+    #query::placeholder {
+      color: #ACF034;
+      opacity: 0.75;
+    }
+
+    #search-form button {
+      width: 48px;
+      border: 0;
+      background: transparent;
+      color: #ACF034;
+      cursor: pointer;
+      font-size: 1.4rem;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px 0;
+    }
+
+    .game-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border: 2px solid #181819;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #102010, #28282b);
+      box-shadow: 0 0 15px rgba(40, 40, 43, 0.8);
+      color: #ACF034;
+      cursor: pointer;
+    }
+
+    .game-item:hover,
+    .game-item:focus-within {
+      border-color: #ACF034;
+      box-shadow: 0 0 20px rgba(172, 240, 52, 0.35);
+    }
+
+    .game-name {
+      padding: 20px;
+      text-align: center;
+      font-size: 1.25rem;
+    }
+
+    .game-title {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #ACF034;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    .game-item:hover .game-title,
+    .game-item:focus-within .game-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .game-item[hidden] {
+      display: none;
+    }
+
+    .glow-on-hover {
+      width: 90%;
+      min-height: 42px;
+      margin: 0 5% 8px;
+      border: 0;
+      border-radius: 8px;
+      position: relative;
+      z-index: 0;
+      background: #111;
+      color: #ACF034;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .glow-on-hover::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      z-index: -1;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #ACF034, #48ff00, #00ffd5, #ACF034);
+      background-size: 400%;
+      filter: blur(5px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      animation: glowing 8s linear infinite;
+    }
+
+    .glow-on-hover:hover::before,
+    .glow-on-hover:focus-visible::before {
+      opacity: 1;
+    }
+
+    .glow-on-hover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 8px;
+      background: #111;
+    }
+
+    @keyframes glowing {
+      0% { background-position: 0 0; }
+      50% { background-position: 400% 0; }
+      100% { background-position: 0 0; }
+    }
+
+    #game-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      background: #000;
+    }
+
+    #game-viewer[hidden] {
+      display: none;
+    }
+
+    .viewer-toolbar {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px;
+      background: #111;
+      color: #ACF034;
+    }
+
+    #viewer-title {
+      flex: 1;
+    }
+
+    .viewer-toolbar button {
+      padding: 6px 12px;
+      border: 1px solid #ACF034;
+      border-radius: 6px;
+      background: #111;
+      color: #ACF034;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    #game-frame {
+      display: block;
+      width: 100%;
+      height: calc(100% - 48px);
+      border: 0;
+      background: #000;
+    }
+
+    @media (hover: none) {
+      .game-title {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Lil Stash</h1>
+
+    <div class="top-tools">
+      <div id="time-box">
+        <span id="custom-time"></span><br>
+        <span id="custom-date"></span>
+      </div>
+
+      <form id="search-form" role="search">
+        <input
+          id="query"
+          type="search"
+          placeholder="Search games"
+          aria-label="Search games"
+        >
+        <button type="submit" aria-label="Search">⌕</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="game-grid" id="game-grid"></main>
+
+  <section id="game-viewer" hidden aria-label="Game player">
+    <div class="viewer-toolbar">
+      <strong id="viewer-title">Game</strong>
+      <button id="fullscreen-game" type="button">Fullscreen</button>
+      <button id="close-game" type="button">Close</button>
+    </div>
+    <iframe id="game-frame" title="Selected game" allowfullscreen></iframe>
+  </section>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+
+      document.getElementById("custom-time").textContent =
+        now.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+
+      document.getElementById("custom-date").textContent =
+        now.toLocaleDateString([], {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        });
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const games = [
+      ["Retro Bowl", "https://jamesleed119-lgtm.github.io/retro-bowl/"],
+      ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/"],
+      ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/"],
+      ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/"],
+      ["Escape Road City 2", "https://escape-road-city-2.github.io/"],
+      ["Escape Road Map", "https://giogotaura55-boop.github.io/Escape-Road-map-/"],
+      ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/"],
+      ["Crazy ELA", "https://lilcoder26.github.io/Crazy-ELA/"],
+      ["Pixel Flap", "https://pixel-flap.edgeone.dev/"],
+      ["Geometry", "https://lilcoder26.github.io/Geometry/"],
+      ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/"],
+      ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/"],
+      ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/"],
+      ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/"],
+      ["Space Waves", "https://brodyfong8.github.io/Spacewaves/"],
+      ["Basket Random", "https://junifer-sgs.github.io/basket-random/"],
+      ["Subway Surfers Classic", "https://martinmmcyt.github.io/subway-surfers-classic/"],
+      ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/"],
+      ["FNAF 2", "https://lilcoder26.github.io/FNAF2/"],
+      ["FNAF 3", "https://lilcoder26.github.io/FNAF3/"],
+      ["FNAF 4", "https://lilcoder26.github.io/FNAF4/"],
+      ["Survival Race", "https://gamestreeem.github.io/Survival-race/"],
+      ["Level Devil", "https://taha309.github.io/LevelDevil/"],
+      ["Chrome Dino", "https://chrisdothtml.github.io/chrome-dino/"],
+      ["Pac-Man", "https://masonicgit.github.io/pacman/"],
+      ["BitLife", "https://lilcoder26.github.io/bitlife/"],
+      ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/"],
+      ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/"],
+      ["Clash Royale Clone", "https://brodyfong8.github.io/Clash-Royale-Clone-1/"],
+      ["OVO", "https://lilcoder26.github.io/OVO/"],
+      ["Block Blast", "https://lilcoder26.github.io/Blockblast/"],
+      ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/"],
+      ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/"]
+    ];
+
+    const grid = document.getElementById("game-grid");
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("query");
+    const viewer = document.getElementById("game-viewer");
+    const gameFrame = document.getElementById("game-frame");
+    const viewerTitle = document.getElementById("viewer-title");
+
+    function openGameOnSite(name, url) {
+      viewerTitle.textContent = name;
+      gameFrame.src = url;
+      viewer.hidden = false;
+    }
+
+    function openGameFullscreen(name, url) {
+      const win = window.open("about:blank", "_blank");
+
+      if (!win) {
+        alert("Please allow pop-ups to open the game.");
+        return;
+      }
+
+      win.document.title = name;
+      win.document.body.style.cssText =
+        "margin:0;width:100vw;height:100vh;overflow:hidden;background:#000";
+
+      const iframe = win.document.createElement("iframe");
+      iframe.src = url;
+      iframe.title = name;
+      iframe.allow = "fullscreen; autoplay";
+      iframe.allowFullscreen = true;
+      iframe.style.cssText =
+        "border:0;width:100%;height:100%;display:block";
+
+      win.document.body.appendChild(iframe);
+    }
+
+    for (const [name, url] of games) {
+      const card = document.createElement("div");
+      card.className = "game-item";
+      card.tabIndex = 0;
+      card.dataset.gameName = name.toLowerCase();
+      card.setAttribute("aria-label", "Play " + name);
+
+      const gameName = document.createElement("span");
+      gameName.className = "game-name";
+      gameName.textContent = name;
+
+      const title = document.createElement("span");
+      title.className = "game-title";
+      title.textContent = name;
+
+      const playButton = document.createElement("button");
+      playButton.className = "glow-on-hover";
+      playButton.type = "button";
+      playButton.textContent = "Play";
+
+      card.addEventListener("click", event => {
+        if (event.target.closest(".glow-on-hover")) return;
+        openGameOnSite(name, url);
+      });
+
+      card.addEventListener("keydown", event => {
+        if (event.target === card && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          openGameOnSite(name, url);
+        }
+      });
+
+      playButton.addEventListener("click", event => {
+        event.stopPropagation();
+        openGameFullscreen(name, url);
+      });
+
+      card.append(gameName, title, playButton);
+      grid.appendChild(card);
+    }
+
+    searchInput.addEventListener("input", () => {
+      const search = searchInput.value.trim().toLowerCase();
+
+      for (const card of grid.querySelectorAll(".game-item")) {
+        card.hidden = !card.dataset.gameName.includes(search);
+      }
+    });
+
+    searchForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const search = searchInput.value.trim().toLowerCase();
+      if (!search) return;
+
+      const match = games.find(([name]) =>
+        name.toLowerCase().includes(search)
+      );
+
+      if (match) {
+        openGameOnSite(match[0], match[1]);
+      }
+    });
+
+    document.getElementById("close-game").addEventListener("click", () => {
+      gameFrame.src = "about:blank";
+      viewer.hidden = true;
+    });
+
+    document.getElementById("fullscreen-game").addEventListener("click", () => {
+      if (gameFrame.requestFullscreen) {
+        gameFrame.requestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
