@@ -212,6 +212,32 @@
       text-shadow: 0 2px 8px #000;
     }
 
+    .game-title {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 48px;
+      left: 0;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      background: rgba(10, 10, 16, 0.92);
+      color: var(--card-accent);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .game-item:hover .game-title,
+    .game-item:focus-visible .game-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .game-item[hidden] {
       display: none;
     }
@@ -304,6 +330,13 @@
       }
     }
 
+    @media (hover: none) {
+      .game-title {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -384,19 +417,19 @@
       ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/"],
       ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/"],
       ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/"],
-      ["Escape Road City 2", "https://escape-road-city-2.github.io/"],
-      ["Escape Road Map", "https://giogotaura55-boop.github.io/Escape-Road-map-/"],
+      ["Escape Road 2", "https://escape-road-city-2.github.io/"],
+      ["Escape Road 3", "https://giogotaura55-boop.github.io/Escape-Road-map-/"],
       ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/"],
-      ["Drive Mad", "https://lilcoder26.github.io/Crazy-ELA/"],
+      ["Drive mad", "https://lilcoder26.github.io/Crazy-ELA/"],
       ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/"],
-      ["Geometry Dash Breeze", "https://lilcoder26.github.io/Geometry/"],
+      ["Geometry", "https://lilcoder26.github.io/Geometry/"],
       ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/"],
       ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/"],
       ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/"],
       ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/"],
       ["Space Waves", "https://brodyfong8.github.io/Spacewaves/"],
       ["Basket Random", "https://junifer-sgs.github.io/basket-random/"],
-      ["Subway Surfers Classic", "https://martinmmcyt.github.io/subway-surfers-classic/"],
+      ["Subway Surfers", "https://martinmmcyt.github.io/subway-surfers-classic/"],
       ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/"],
       ["FNAF 2", "https://lilcoder26.github.io/FNAF2/"],
       ["FNAF 3", "https://lilcoder26.github.io/FNAF3/"],
@@ -408,7 +441,7 @@
       ["BitLife", "https://lilcoder26.github.io/bitlife/"],
       ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/"],
       ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/"],
-      ["Clash Royale Clone", "https://brodyfong8.github.io/Clash-Royale-Clone-1/"],
+      ["Clash Royale ", "https://brodyfong8.github.io/Clash-Royale-Clone-1/"],
       ["OvO", "https://lilcoder26.github.io/OVO/"],
       ["Block Blast", "https://lilcoder26.github.io/Blockblast/"],
       ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/"],
@@ -462,6 +495,10 @@
       gameName.className = "game-name";
       gameName.textContent = name;
 
+      const title = document.createElement("span");
+      title.className = "game-title";
+      title.textContent = name;
+
       const playButton = document.createElement("button");
       playButton.className = "glow-on-hover";
       playButton.type = "button";
@@ -484,7 +521,7 @@
         openGameFullscreen(name, url);
       });
 
-      card.append(gameName, playButton);
+      card.append(gameName, title, playButton);
       grid.appendChild(card);
     }
 
