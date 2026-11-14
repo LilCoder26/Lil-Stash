@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lil Stash</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
 
   <style>
     * {
@@ -13,11 +16,23 @@
       font-family: "Oswald", sans-serif;
     }
 
+    :root {
+      --lime: #c9ff38;
+      --cyan: #55edff;
+      --orange: #ff9f43;
+      --yellow: #ffe45e;
+    }
+
     body {
       min-height: 100vh;
       margin: 0;
-      background: #000;
-      color: #ACF034;
+      color: #fff;
+      background:
+        radial-gradient(ellipse at 10% 10%, rgba(85, 237, 255, 0.2), transparent 35%),
+        radial-gradient(ellipse at 90% 25%, rgba(255, 159, 67, 0.16), transparent 32%),
+        radial-gradient(ellipse at 50% 90%, rgba(201, 255, 56, 0.14), transparent 35%),
+        #101018;
+      background-attachment: fixed;
     }
 
     header {
@@ -26,8 +41,14 @@
     }
 
     h1 {
+      display: inline-block;
       margin: 0 0 20px;
-      font-size: 2.4rem;
+      color: var(--lime);
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      line-height: 1;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 #397d45, 0 0 22px rgba(201, 255, 56, 0.4);
+      animation: title-float 3s ease-in-out infinite;
     }
 
     .top-tools {
@@ -35,63 +56,88 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 15px;
+      gap: 14px;
     }
 
     #time-box {
-      padding: 10px 15px;
-      border-radius: 20px;
-      background: #111;
-      color: #ACF034;
+      padding: 9px 16px;
+      border: 1px solid rgba(201, 255, 56, 0.5);
+      border-radius: 16px;
+      background: rgba(25, 24, 37, 0.9);
+      box-shadow: 0 0 18px rgba(201, 255, 56, 0.12);
+      color: var(--lime);
       text-align: center;
-      line-height: 1.5;
+      line-height: 1.4;
+    }
+
+    #custom-time {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    #custom-date {
+      color: #c6c2d2;
+      font-size: 0.85rem;
     }
 
     #search-form {
       display: flex;
       width: min(400px, 90vw);
-      height: 44px;
+      height: 46px;
       overflow: hidden;
+      border: 1px solid rgba(85, 237, 255, 0.45);
       border-radius: 24px;
-      background: #28282b;
+      background: #1c1a29;
+      box-shadow: 0 0 18px rgba(85, 237, 255, 0.12);
     }
 
     #query {
       flex: 1;
       min-width: 0;
-      padding: 0 14px;
+      padding: 0 16px;
       border: 0;
       outline: 0;
       background: transparent;
-      color: #ACF034;
+      color: #fff;
       font-size: 1rem;
     }
 
     #query::placeholder {
-      color: #ACF034;
-      opacity: 0.75;
+      color: #aaa5bb;
+    }
+
+    #search-form:focus-within {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(85, 237, 255, 0.3);
     }
 
     #search-form button {
-      width: 48px;
+      width: 52px;
       border: 0;
-      background: transparent;
-      color: #ACF034;
+      background: linear-gradient(135deg, var(--cyan), var(--lime));
+      color: #11101a;
       cursor: pointer;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      transition: filter 0.2s ease;
+    }
+
+    #search-form button:hover {
+      filter: brightness(1.2);
     }
 
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 17px;
       width: 90%;
       max-width: 1200px;
       margin: 20px auto;
-      padding: 20px 0;
+      padding: 20px 0 40px;
     }
 
     .game-item {
+      --card-accent: var(--lime);
+
       position: relative;
       display: flex;
       flex-direction: column;
@@ -99,47 +145,95 @@
       justify-content: center;
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      border: 2px solid #181819;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #102010, #28282b);
-      box-shadow: 0 0 15px rgba(40, 40, 43, 0.8);
-      color: #ACF034;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      background:
+        radial-gradient(
+          circle at 20% 15%,
+          color-mix(in srgb, var(--card-accent) 25%, transparent),
+          transparent 48%
+        ),
+        linear-gradient(145deg, #29283a, #171620 70%);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+      color: #fff;
       cursor: pointer;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .game-item:nth-child(4n + 2) {
+      --card-accent: var(--cyan);
+    }
+
+    .game-item:nth-child(4n + 3) {
+      --card-accent: var(--orange);
+    }
+
+    .game-item:nth-child(4n + 4) {
+      --card-accent: var(--yellow);
+    }
+
+    .game-item::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg 280deg,
+        color-mix(in srgb, var(--card-accent) 28%, transparent) 330deg,
+        transparent 360deg
+      );
+      opacity: 0.65;
+      animation: slow-spin 12s linear infinite;
+      pointer-events: none;
     }
 
     .game-item:hover,
-    .game-item:focus-within {
-      border-color: #ACF034;
-      box-shadow: 0 0 20px rgba(172, 240, 52, 0.35);
+    .game-item:focus-visible {
+      z-index: 1;
+      transform: translateY(-4px) scale(1.025);
+      border-color: var(--card-accent);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.35),
+        0 0 20px color-mix(in srgb, var(--card-accent) 30%, transparent);
+      outline: none;
     }
 
     .game-name {
-      padding: 20px;
+      position: relative;
+      z-index: 1;
+      padding: 18px 12px;
+      color: #fff;
       text-align: center;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
+      line-height: 1.2;
+      text-shadow: 0 2px 8px #000;
     }
 
     .game-title {
       position: absolute;
+      z-index: 2;
       right: 0;
-      bottom: 0;
+      bottom: 48px;
       left: 0;
-      min-height: 45px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 6px;
-      background: rgba(0, 0, 0, 0.85);
-      color: #ACF034;
+      background: rgba(10, 10, 16, 0.92);
+      color: var(--card-accent);
       text-align: center;
       opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
       pointer-events: none;
     }
 
     .game-item:hover .game-title,
-    .game-item:focus-within .game-title {
+    .game-item:focus-visible .game-title {
       opacity: 1;
       transform: translateY(0);
     }
@@ -149,58 +243,33 @@
     }
 
     .glow-on-hover {
-      width: 90%;
-      min-height: 42px;
-      margin: 0 5% 8px;
-      border: 0;
-      border-radius: 8px;
       position: relative;
-      z-index: 0;
-      background: #111;
-      color: #ACF034;
+      z-index: 1;
+      width: 88%;
+      min-height: 40px;
+      margin: 0 6% 8px;
+      overflow: hidden;
+      border: 1px solid var(--card-accent);
+      border-radius: 9px;
+      background: rgba(13, 13, 19, 0.88);
+      color: var(--card-accent);
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
-    .glow-on-hover::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      z-index: -1;
-      border-radius: 10px;
-      background: linear-gradient(45deg, #ACF034, #48ff00, #00ffd5, #ACF034);
-      background-size: 400%;
-      filter: blur(5px);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      animation: glowing 8s linear infinite;
-    }
-
-    .glow-on-hover:hover::before,
-    .glow-on-hover:focus-visible::before {
-      opacity: 1;
-    }
-
-    .glow-on-hover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: 8px;
-      background: #111;
-    }
-
-    @keyframes glowing {
-      0% { background-position: 0 0; }
-      50% { background-position: 400% 0; }
-      100% { background-position: 0 0; }
+    .glow-on-hover:hover,
+    .glow-on-hover:focus-visible {
+      background: var(--card-accent);
+      color: #11101a;
+      outline: none;
     }
 
     #game-viewer {
       position: fixed;
       inset: 0;
       z-index: 10;
-      background: #000;
+      background: #0c0b12;
     }
 
     #game-viewer[hidden] {
@@ -208,13 +277,14 @@
     }
 
     .viewer-toolbar {
-      height: 48px;
+      height: 52px;
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 0 12px;
-      background: #111;
-      color: #ACF034;
+      border-bottom: 1px solid rgba(201, 255, 56, 0.25);
+      background: #171521;
+      color: var(--lime);
     }
 
     #viewer-title {
@@ -222,27 +292,59 @@
     }
 
     .viewer-toolbar button {
-      padding: 6px 12px;
-      border: 1px solid #ACF034;
-      border-radius: 6px;
-      background: #111;
-      color: #ACF034;
+      padding: 7px 13px;
+      border: 1px solid var(--lime);
+      border-radius: 7px;
+      background: #211f2e;
+      color: var(--lime);
       cursor: pointer;
       font-size: 1rem;
+    }
+
+    .viewer-toolbar button:hover {
+      background: var(--lime);
+      color: #11101a;
     }
 
     #game-frame {
       display: block;
       width: 100%;
-      height: calc(100% - 48px);
+      height: calc(100% - 52px);
       border: 0;
       background: #000;
+    }
+
+    @keyframes slow-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes title-float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-3px);
+      }
     }
 
     @media (hover: none) {
       .game-title {
         opacity: 1;
         transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -278,7 +380,13 @@
       <button id="fullscreen-game" type="button">Fullscreen</button>
       <button id="close-game" type="button">Close</button>
     </div>
-    <iframe id="game-frame" title="Selected game" allowfullscreen></iframe>
+
+    <iframe
+      id="game-frame"
+      title="Selected game"
+      allow="fullscreen; autoplay"
+      allowfullscreen
+    ></iframe>
   </section>
 
   <script>
@@ -313,7 +421,7 @@
       ["Escape Road Map", "https://giogotaura55-boop.github.io/Escape-Road-map-/"],
       ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/"],
       ["Crazy ELA", "https://lilcoder26.github.io/Crazy-ELA/"],
-      ["Pixel Flap", "https://pixel-flap.edgeone.dev/"],
+      ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/"],
       ["Geometry", "https://lilcoder26.github.io/Geometry/"],
       ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/"],
       ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/"],
@@ -328,13 +436,13 @@
       ["FNAF 4", "https://lilcoder26.github.io/FNAF4/"],
       ["Survival Race", "https://gamestreeem.github.io/Survival-race/"],
       ["Level Devil", "https://taha309.github.io/LevelDevil/"],
-      ["Chrome Dino", "https://chrisdothtml.github.io/chrome-dino/"],
+      ["Dino game", "https://chrisdothtml.github.io/chrome-dino/"],
       ["Pac-Man", "https://masonicgit.github.io/pacman/"],
       ["BitLife", "https://lilcoder26.github.io/bitlife/"],
       ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/"],
       ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/"],
       ["Clash Royale Clone", "https://brodyfong8.github.io/Clash-Royale-Clone-1/"],
-      ["OVO", "https://lilcoder26.github.io/OVO/"],
+      ["OvO", "https://lilcoder26.github.io/OVO/"],
       ["Block Blast", "https://lilcoder26.github.io/Blockblast/"],
       ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/"],
       ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/"]
