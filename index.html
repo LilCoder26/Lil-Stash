@@ -125,6 +125,72 @@
       filter: brightness(1.2);
     }
 
+    .request-button-wrap {
+      margin: 20px auto 0;
+      text-align: center;
+    }
+
+    .fullscreen-button {
+      width: 220px;
+      min-height: 50px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      outline: none;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      position: relative;
+      z-index: 0;
+    }
+
+    .fullscreen-button::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      z-index: -1;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      border-radius: 10px;
+      background: linear-gradient(
+        45deg,
+        #ff0000,
+        #ff7300,
+        #fffb00,
+        #48ff00,
+        #00ffd5,
+        #002bff,
+        #7a00ff,
+        #ff00c8,
+        #ff0000
+      );
+      background-size: 400%;
+      filter: blur(5px);
+      opacity: 0;
+      animation: glowing 20s linear infinite;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .fullscreen-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 10px;
+      background: #111;
+    }
+
+    .fullscreen-button:hover::before,
+    .fullscreen-button:focus-visible::before {
+      opacity: 1;
+    }
+
+    .fullscreen-button:active {
+      color: #000;
+    }
+
     .game-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
@@ -255,6 +321,20 @@
       }
     }
 
+    @keyframes glowing {
+      0% {
+        background-position: 0 0;
+      }
+
+      50% {
+        background-position: 400% 0;
+      }
+
+      100% {
+        background-position: 0 0;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -287,6 +367,12 @@
         >
         <button type="submit" aria-label="Search">⌕</button>
       </form>
+    </div>
+
+    <div class="request-button-wrap">
+      <button id="fullscreen-button" class="fullscreen-button" type="button">
+        Play Fullscreen!
+      </button>
     </div>
   </header>
 
@@ -381,7 +467,10 @@
       });
 
       card.addEventListener("keydown", event => {
-        if (event.target === card && (event.key === "Enter" || event.key === " ")) {
+        if (
+          event.target === card &&
+          (event.key === "Enter" || event.key === " ")
+        ) {
           event.preventDefault();
           openGame(url);
         }
@@ -418,6 +507,19 @@
         openGame(match[1]);
       }
     });
+
+    document
+      .getElementById("fullscreen-button")
+      .addEventListener("click", () => {
+        const win = window.open(
+          "https://forms.gle/EX4ca1BmsJTZAuBd8",
+          "_blank"
+        );
+
+        if (win) {
+          win.focus();
+        }
+      });
   </script>
 </body>
 </html>
