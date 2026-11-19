@@ -131,6 +131,8 @@
     }
 
     .fullscreen-button {
+      position: relative;
+      z-index: 0;
       width: 220px;
       min-height: 50px;
       padding: 10px 16px;
@@ -141,8 +143,6 @@
       color: #fff;
       cursor: pointer;
       font-size: 1rem;
-      position: relative;
-      z-index: 0;
     }
 
     .fullscreen-button::before {
@@ -306,33 +306,18 @@
     }
 
     @keyframes slow-spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     @keyframes title-float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-3px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
     }
 
     @keyframes glowing {
-      0% {
-        background-position: 0 0;
-      }
-
-      50% {
-        background-position: 400% 0;
-      }
-
-      100% {
-        background-position: 0 0;
-      }
+      0% { background-position: 0 0; }
+      50% { background-position: 400% 0; }
+      100% { background-position: 0 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -442,7 +427,29 @@
     const searchInput = document.getElementById("query");
 
     function openGame(url) {
-      window.open(url, "_blank", "noopener,noreferrer");
+      // Open synchronously during the click/submit action to avoid popup blocking.
+      const gameTab = window.open("about:blank", "_blank");
+
+      if (!gameTab) {
+        alert("Please allow pop-ups for this site.");
+        return;
+      }
+
+      gameTab.document.title = "Lil Stash Game";
+      gameTab.document.documentElement.style.cssText =
+        "height:100%;margin:0";
+      gameTab.document.body.style.cssText =
+        "height:100%;margin:0;overflow:hidden;background:#000";
+
+      const frame = gameTab.document.createElement("iframe");
+      frame.src = url;
+      frame.title = "Game";
+      frame.allow = "fullscreen; autoplay; gamepad";
+      frame.style.cssText =
+        "width:100vw;height:100vh;border:0;display:block";
+
+      gameTab.document.body.appendChild(frame);
+      gameTab.focus();
     }
 
     for (const [name, url] of games) {
