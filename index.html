@@ -118,11 +118,6 @@
       color: #11101a;
       cursor: pointer;
       font-size: 1.5rem;
-      transition: filter 0.2s ease;
-    }
-
-    #search-form button:hover {
-      filter: brightness(1.2);
     }
 
     .request-button-wrap {
@@ -138,7 +133,6 @@
       padding: 10px 16px;
       border: 0;
       border-radius: 10px;
-      outline: none;
       background: #111;
       color: #fff;
       cursor: pointer;
@@ -156,15 +150,8 @@
       border-radius: 10px;
       background: linear-gradient(
         45deg,
-        #ff0000,
-        #ff7300,
-        #fffb00,
-        #48ff00,
-        #00ffd5,
-        #002bff,
-        #7a00ff,
-        #ff00c8,
-        #ff0000
+        #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5,
+        #002bff, #7a00ff, #ff00c8, #ff0000
       );
       background-size: 400%;
       filter: blur(5px);
@@ -187,10 +174,6 @@
       opacity: 1;
     }
 
-    .fullscreen-button:active {
-      color: #000;
-    }
-
     .game-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
@@ -203,7 +186,6 @@
 
     .game-item {
       --card-accent: var(--lime);
-
       position: relative;
       display: flex;
       flex-direction: column;
@@ -222,24 +204,12 @@
         linear-gradient(145deg, #29283a, #171620 70%);
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
       color: #fff;
-      cursor: pointer;
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .game-item:nth-child(4n + 2) {
-      --card-accent: var(--cyan);
-    }
-
-    .game-item:nth-child(4n + 3) {
-      --card-accent: var(--orange);
-    }
-
-    .game-item:nth-child(4n + 4) {
-      --card-accent: var(--yellow);
-    }
+    .game-item:nth-child(4n + 2) { --card-accent: var(--cyan); }
+    .game-item:nth-child(4n + 3) { --card-accent: var(--orange); }
+    .game-item:nth-child(4n + 4) { --card-accent: var(--yellow); }
 
     .game-item::before {
       content: "";
@@ -256,21 +226,15 @@
       pointer-events: none;
     }
 
-    .game-item:hover,
-    .game-item:focus-visible {
-      z-index: 1;
+    .game-item:hover {
       transform: translateY(-4px) scale(1.025);
       border-color: var(--card-accent);
-      box-shadow:
-        0 10px 28px rgba(0, 0, 0, 0.35),
-        0 0 20px color-mix(in srgb, var(--card-accent) 30%, transparent);
-      outline: none;
     }
 
     .game-name {
       position: relative;
       z-index: 1;
-      padding: 18px 12px;
+      padding: 12px;
       color: #fff;
       text-align: center;
       font-size: 1.3rem;
@@ -305,6 +269,67 @@
       outline: none;
     }
 
+    #game-viewer[hidden] {
+      display: none;
+    }
+
+    #game-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      background: rgba(8, 8, 13, 0.96);
+    }
+
+    .viewer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: min(1200px, 100%);
+      margin: 0 auto 10px;
+    }
+
+    #viewer-title {
+      margin: 0;
+      color: var(--lime);
+      font-size: 1.4rem;
+    }
+
+    .viewer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    #play-fullscreen,
+    #close-viewer {
+      padding: 8px 15px;
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      background: #171620;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    #play-fullscreen:hover,
+    #close-viewer:hover {
+      background: var(--cyan);
+      color: #11101a;
+    }
+
+    #game-frame {
+      flex: 1;
+      width: min(1200px, 100%);
+      min-height: 0;
+      margin: 0 auto;
+      border: 1px solid rgba(85, 237, 255, 0.45);
+      border-radius: 10px;
+      background: #000;
+    }
+
     @keyframes slow-spin {
       to { transform: rotate(360deg); }
     }
@@ -320,13 +345,26 @@
       100% { background-position: 0 0; }
     }
 
+    @media (max-width: 500px) {
+      #game-viewer {
+        padding: 8px;
+      }
+
+      #game-frame {
+        border-radius: 6px;
+      }
+
+      .viewer-header {
+        flex-wrap: wrap;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
       *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
       }
     }
@@ -355,13 +393,30 @@
     </div>
 
     <div class="request-button-wrap">
-      <button id="fullscreen-button" class="fullscreen-button" type="button">
+      <button id="vote-button" class="fullscreen-button" type="button">
         Game vote
       </button>
     </div>
   </header>
 
   <main class="game-grid" id="game-grid"></main>
+
+  <section id="game-viewer" hidden aria-label="Game player">
+    <div class="viewer-header">
+      <h2 id="viewer-title">Game</h2>
+
+      <div class="viewer-actions">
+        <button id="play-fullscreen" type="button">Play Fullscreen!</button>
+        <button id="close-viewer" type="button">Close game ✕</button>
+      </div>
+    </div>
+
+    <iframe
+      id="game-frame"
+      title="Game"
+      allow="fullscreen; autoplay; gamepad"
+    ></iframe>
+  </section>
 
   <script>
     function updateClock() {
@@ -425,9 +480,32 @@
     const grid = document.getElementById("game-grid");
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("query");
+    const gameViewer = document.getElementById("game-viewer");
+    const gameFrame = document.getElementById("game-frame");
+    const viewerTitle = document.getElementById("viewer-title");
+    const fullscreenButton = document.getElementById("play-fullscreen");
 
-    function openGame(url) {
-      // Open synchronously during the click/submit action to avoid popup blocking.
+    let currentGame = null;
+    let fullscreenTab = null;
+
+    function playInBox(name, url) {
+      currentGame = { name, url };
+      fullscreenTab = null;
+      viewerTitle.textContent = name;
+      gameFrame.src = url;
+      fullscreenButton.textContent = "Play Fullscreen!";
+      gameViewer.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function playFullscreen() {
+      if (!currentGame) return;
+
+      if (fullscreenTab && !fullscreenTab.closed) {
+        fullscreenTab.focus();
+        return;
+      }
+
       const gameTab = window.open("about:blank", "_blank");
 
       if (!gameTab) {
@@ -435,29 +513,49 @@
         return;
       }
 
-      gameTab.document.title = "Lil Stash Game";
+      fullscreenTab = gameTab;
+
+      gameTab.document.title = currentGame.name;
       gameTab.document.documentElement.style.cssText =
         "height:100%;margin:0";
       gameTab.document.body.style.cssText =
-        "height:100%;margin:0;overflow:hidden;background:#000";
+        "height:100vh;margin:0;overflow:hidden;background:#000";
 
       const frame = gameTab.document.createElement("iframe");
-      frame.src = url;
-      frame.title = "Game";
+      frame.src = currentGame.url;
+      frame.title = currentGame.name;
       frame.allow = "fullscreen; autoplay; gamepad";
       frame.style.cssText =
-        "width:100vw;height:100vh;border:0;display:block";
+        "border:none;width:100%;height:100%;margin:0;display:block";
 
       gameTab.document.body.appendChild(frame);
       gameTab.focus();
+
+      fullscreenButton.textContent = "Page Opened!";
     }
 
+    function closeGame() {
+      gameFrame.src = "about:blank";
+      gameViewer.hidden = true;
+      document.body.style.overflow = "";
+      currentGame = null;
+      fullscreenTab = null;
+      fullscreenButton.textContent = "Play Fullscreen!";
+    }
+
+    fullscreenButton.addEventListener("click", playFullscreen);
+    document.getElementById("close-viewer").addEventListener("click", closeGame);
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !gameViewer.hidden) {
+        closeGame();
+      }
+    });
+
     for (const [name, url] of games) {
-      const card = document.createElement("div");
+      const card = document.createElement("article");
       card.className = "game-item";
-      card.tabIndex = 0;
       card.dataset.gameName = name.toLowerCase();
-      card.setAttribute("aria-label", "Play " + name);
 
       const gameName = document.createElement("span");
       gameName.className = "game-name";
@@ -467,26 +565,7 @@
       playButton.className = "glow-on-hover";
       playButton.type = "button";
       playButton.textContent = "Play";
-
-      card.addEventListener("click", event => {
-        if (event.target.closest(".glow-on-hover")) return;
-        openGame(url);
-      });
-
-      card.addEventListener("keydown", event => {
-        if (
-          event.target === card &&
-          (event.key === "Enter" || event.key === " ")
-        ) {
-          event.preventDefault();
-          openGame(url);
-        }
-      });
-
-      playButton.addEventListener("click", event => {
-        event.stopPropagation();
-        openGame(url);
-      });
+      playButton.addEventListener("click", () => playInBox(name, url));
 
       card.append(gameName, playButton);
       grid.appendChild(card);
@@ -511,22 +590,18 @@
       );
 
       if (match) {
-        openGame(match[1]);
+        playInBox(match[0], match[1]);
       }
     });
 
-    document
-      .getElementById("fullscreen-button")
-      .addEventListener("click", () => {
-        const win = window.open(
-          "https://forms.gle/EX4ca1BmsJTZAuBd8",
-          "_blank"
-        );
+    document.getElementById("vote-button").addEventListener("click", () => {
+      const voteTab = window.open(
+        "https://forms.gle/EX4ca1BmsJTZAuBd8",
+        "_blank"
+      );
 
-        if (win) {
-          win.focus();
-        }
-      });
+      if (voteTab) voteTab.focus();
+    });
   </script>
 </body>
 </html>
