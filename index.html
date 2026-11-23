@@ -280,7 +280,7 @@
       display: flex;
       flex-direction: column;
       padding: 12px;
-      background: rgba(8, 8, 13, 0.96);
+      background: #101018;
     }
 
     .viewer-header {
@@ -300,24 +300,33 @@
 
     .viewer-actions {
       display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .viewer-primary-actions {
+      display: flex;
       gap: 8px;
     }
 
     #play-fullscreen,
-    #close-viewer {
+    #close-viewer,
+    #schoology-button {
       padding: 8px 15px;
       border: 1px solid var(--cyan);
       border-radius: 8px;
-      background: #171620;
-      color: #fff;
+      background: var(--cyan);
+      color: #11101a;
       cursor: pointer;
       font-size: 1rem;
     }
 
     #play-fullscreen:hover,
-    #close-viewer:hover {
-      background: var(--cyan);
-      color: #11101a;
+    #close-viewer:hover,
+    #schoology-button:hover {
+      background: var(--lime);
+      border-color: var(--lime);
     }
 
     #game-frame {
@@ -355,6 +364,14 @@
       }
 
       .viewer-header {
+        flex-wrap: wrap;
+      }
+
+      .viewer-actions {
+        align-items: flex-start;
+      }
+
+      .viewer-primary-actions {
         flex-wrap: wrap;
       }
     }
@@ -406,8 +423,11 @@
       <h2 id="viewer-title">Game</h2>
 
       <div class="viewer-actions">
-        <button id="play-fullscreen" type="button">Play Fullscreen!</button>
-        <button id="close-viewer" type="button">Close game ✕</button>
+        <div class="viewer-primary-actions">
+          <button id="play-fullscreen" type="button">Play Fullscreen!</button>
+          <button id="close-viewer" type="button">Close game ✕</button>
+          <button id="schoology-button" type="button">Open Schoology</button>
+        </div>
       </div>
     </div>
 
@@ -476,7 +496,7 @@
       ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/"],
       ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/"],
       ["Brawl Stars", "https://brodyfong8.github.io/Brawl-Simulator-3D/"],
-      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/"],
+      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/"]
     ];
 
     const grid = document.getElementById("game-grid");
@@ -547,6 +567,14 @@
 
     fullscreenButton.addEventListener("click", playFullscreen);
     document.getElementById("close-viewer").addEventListener("click", closeGame);
+
+    document.getElementById("schoology-button").addEventListener("click", () => {
+      window.open(
+        "https://centennial.schoology.com/home",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    });
 
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && !gameViewer.hidden) {
