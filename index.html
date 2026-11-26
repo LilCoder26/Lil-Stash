@@ -3,66 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101018">
   <title>Lil Stash</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Oswald", sans-serif;
-    }
-
     :root {
+      color-scheme: dark;
       --lime: #c9ff38;
       --cyan: #55edff;
       --orange: #ff9f43;
       --yellow: #ffe45e;
+      --dark: #101018;
+      --panel: rgba(25, 24, 37, .88);
+      --muted: #bcb8ca;
+      --line: rgba(85, 237, 255, .24);
+      --content-width: 1200px;
+      --radius: 18px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       min-height: 100vh;
       margin: 0;
       color: #fff;
+      font-family: "Oswald", sans-serif;
       background:
-        radial-gradient(ellipse at 10% 10%, rgba(85, 237, 255, .2), transparent 35%),
-        radial-gradient(ellipse at 90% 25%, rgba(255, 159, 67, .16), transparent 32%),
-        radial-gradient(ellipse at 50% 90%, rgba(201, 255, 56, .14), transparent 35%),
-        #101018;
+        radial-gradient(ellipse at 8% 5%, rgba(85, 237, 255, .16), transparent 35%),
+        radial-gradient(ellipse at 92% 18%, rgba(255, 159, 67, .13), transparent 32%),
+        radial-gradient(ellipse at 50% 100%, rgba(201, 255, 56, .10), transparent 38%),
+        var(--dark);
       background-attachment: fixed;
     }
 
-    header {
-      padding: 24px 20px 0;
+    body.viewer-open {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    a {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    .game-card:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 4px;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 68px;
+      padding: 10px max(20px, calc((100vw - var(--content-width)) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgba(16, 16, 24, .88);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      color: var(--lime);
+      cursor: pointer;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-decoration: none;
+      white-space: nowrap;
+      text-shadow: 0 0 16px rgba(201, 255, 56, .28);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .nav-button,
+    .menu-toggle {
+      padding: 8px 15px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(28, 26, 41, .9);
+      color: #fff;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .nav-button:hover,
+    .nav-button.active {
+      border-color: var(--lime);
+      background: var(--lime);
+      color: #11101a;
+    }
+
+    .menu-toggle {
+      display: none;
+      color: var(--lime);
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .page {
+      min-height: calc(100vh - 68px);
+      padding: 36px 20px 64px;
+      animation: page-in .28s ease both;
+    }
+
+    .page[hidden] {
+      display: none;
+    }
+
+    .page-title {
+      margin: 4px 0 18px;
+      color: var(--lime);
+      text-align: center;
+      font-size: clamp(2.6rem, 8vw, 4.6rem);
+      line-height: .98;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 #397d45, 0 0 24px rgba(201, 255, 56, .3);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--cyan);
+      font-size: .83rem;
+      letter-spacing: .18em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .home-content {
+      display: grid;
+      min-height: min(70vh, 700px);
+      place-content: center;
+      padding: 35px 20px;
       text-align: center;
     }
 
-    h1 {
-      display: inline-block;
-      margin: 0 0 20px;
-      color: var(--lime);
-      font-size: clamp(2.4rem, 7vw, 4rem);
-      line-height: 1;
-      letter-spacing: 2px;
-      text-shadow: 3px 3px 0 #397d45, 0 0 22px rgba(201, 255, 56, .4);
-      animation: title-float 3s ease-in-out infinite;
+    .home-content .page-title {
+      margin-bottom: 12px;
     }
 
-    .top-tools {
+    .home-content p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.15rem, 3vw, 1.35rem);
+    }
+
+    .home-actions,
+    .content-links {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .action-link,
+    .stuff-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 19px;
+      border: 1px solid var(--cyan);
+      border-radius: 12px;
+      background: var(--cyan);
+      color: #11101a;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    .action-link:hover,
+    .stuff-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--lime);
+      background: var(--lime);
+    }
+
+    .action-link.secondary {
+      border-color: var(--line);
+      background: rgba(28, 26, 41, .85);
+      color: #fff;
+    }
+
+    .action-link.secondary:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .games-heading {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .games-heading .page-title {
+      margin-bottom: 8px;
+    }
+
+    .games-heading p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tools-panel {
+      display: grid;
+      grid-template-columns: auto minmax(200px, 400px);
       align-items: center;
       justify-content: center;
       gap: 14px;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .18);
     }
 
     #time-box {
-      padding: 9px 16px;
-      border: 1px solid rgba(201, 255, 56, .5);
-      border-radius: 16px;
-      background: rgba(25, 24, 37, .9);
+      min-width: 180px;
       color: var(--lime);
-      line-height: 1.4;
+      line-height: 1.35;
+      text-align: center;
     }
 
     #custom-time {
@@ -71,18 +263,18 @@
     }
 
     #custom-date {
-      color: #c6c2d2;
-      font-size: .85rem;
+      color: var(--muted);
+      font-size: .83rem;
     }
 
     #search-form {
       display: flex;
-      width: min(400px, 90vw);
+      width: 100%;
       height: 46px;
       overflow: hidden;
-      border: 1px solid rgba(85, 237, 255, .45);
-      border-radius: 24px;
-      background: #1c1a29;
+      border: 1px solid rgba(85, 237, 255, .36);
+      border-radius: 999px;
+      background: #171622;
     }
 
     #query {
@@ -97,7 +289,7 @@
     }
 
     #query::placeholder {
-      color: #aaa5bb;
+      color: #9691a8;
     }
 
     #search-form button {
@@ -106,119 +298,196 @@
       background: linear-gradient(135deg, var(--cyan), var(--lime));
       color: #11101a;
       cursor: pointer;
-      font-size: 1.5rem;
+      font-size: 1.35rem;
     }
 
-    .request-button-wrap {
-      margin: 20px auto 0;
-      text-align: center;
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin: 22px auto 12px;
+    }
+
+    .filter-button {
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(28, 26, 41, .78);
+      color: #eee;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .filter-button:hover,
+    .filter-button[aria-pressed="true"] {
+      border-color: var(--cyan);
+      background: rgba(85, 237, 255, .14);
+      color: var(--cyan);
+    }
+
+    .filter-button.favorites-filter[aria-pressed="true"] {
+      border-color: var(--yellow);
+      background: rgba(255, 228, 94, .14);
+      color: var(--yellow);
+    }
+
+    .grid-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: min(92%, var(--content-width));
+      margin: 0 auto 12px;
+      color: var(--muted);
+      font-size: .9rem;
     }
 
     .vote-button {
-      position: relative;
-      z-index: 0;
-      width: 220px;
-      min-height: 50px;
-      padding: 10px 16px;
-      border: 0;
+      padding: 8px 14px;
+      border: 1px solid rgba(201, 255, 56, .55);
       border-radius: 10px;
-      background: #111;
-      color: #fff;
+      background: rgba(201, 255, 56, .08);
+      color: var(--lime);
       cursor: pointer;
-      font-size: 1rem;
+      transition: .18s ease;
     }
 
-    .vote-button::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      z-index: -1;
-      border-radius: 10px;
-      background: linear-gradient(
-        45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5,
-        #002bff, #7a00ff, #ff00c8, #ff0000
-      );
-      background-size: 400%;
-      filter: blur(5px);
-      opacity: 0;
-      animation: glowing 20s linear infinite;
-      transition: opacity .3s ease-in-out;
-    }
-
-    .vote-button:hover::before,
-    .vote-button:focus-visible::before {
-      opacity: 1;
-    }
-
-    .vote-button::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: 10px;
-      background: #111;
+    .vote-button:hover {
+      background: var(--lime);
+      color: #11101a;
     }
 
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
       gap: 17px;
-      width: 90%;
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px 0 40px;
+      width: min(92%, var(--content-width));
+      margin: 0 auto;
     }
 
-    .game-item {
+    .game-card {
       --card-accent: var(--lime);
+      position: relative;
       min-width: 0;
       overflow: hidden;
-      border-radius: 12px;
-      background: #080b10;
-      box-shadow: 0 5px 16px rgba(0, 0, 0, .35);
+      border: 1px solid rgba(255, 255, 255, .05);
+      border-radius: 15px;
+      background: linear-gradient(160deg, #171622, #090a10 72%);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
       cursor: pointer;
-      transition: transform .2s ease;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
 
-    .game-item:nth-child(4n + 2) { --card-accent: var(--cyan); }
-    .game-item:nth-child(4n + 3) { --card-accent: var(--orange); }
-    .game-item:nth-child(4n + 4) { --card-accent: var(--yellow); }
-
-    .game-item:hover {
-      transform: translateY(-4px) scale(1.025);
+    .game-card:nth-child(4n + 2) {
+      --card-accent: var(--cyan);
     }
 
-    .game-item:focus-visible {
-      outline: 2px solid var(--card-accent);
-      outline-offset: 3px;
+    .game-card:nth-child(4n + 3) {
+      --card-accent: var(--orange);
     }
 
-    .game-item[hidden] {
-      display: none;
+    .game-card:nth-child(4n + 4) {
+      --card-accent: var(--yellow);
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--card-accent);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, .36);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(85, 237, 255, .12), transparent 55%),
+        #0c0c14;
     }
 
     .game-thumbnail {
       display: block;
       width: 100%;
-      aspect-ratio: 1 / 1;
+      height: 100%;
       object-fit: cover;
-      border: 3px solid var(--card-accent);
-      border-radius: 12px;
-      background: #101018;
+      transition: transform .35s ease;
+    }
+
+    .game-card:hover .game-thumbnail {
+      transform: scale(1.06);
+    }
+
+    .image-fallback {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      padding: 18px;
+      color: var(--card-accent);
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .favorite-button {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      z-index: 2;
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 50%;
+      background: rgba(13, 13, 20, .78);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      backdrop-filter: blur(6px);
+    }
+
+    .favorite-button[aria-pressed="true"] {
+      border-color: var(--yellow);
+      color: var(--yellow);
     }
 
     .game-name {
       display: block;
-      width: 100%;
-      padding: 7px 5px 9px;
+      min-height: 48px;
+      padding: 9px 8px 11px;
       color: #f5f5f5;
       text-align: center;
       font-size: 1rem;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
-    #game-viewer[hidden] {
-      display: none;
+    .empty-state {
+      width: min(92%, var(--content-width));
+      margin: 28px auto;
+      padding: 24px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .content-panel {
+      width: min(900px, 92%);
+      margin: 24px auto;
+      padding: clamp(22px, 5vw, 38px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      text-align: center;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .22);
+    }
+
+    .content-panel p {
+      color: var(--muted);
     }
 
     #game-viewer {
@@ -228,7 +497,12 @@
       display: flex;
       flex-direction: column;
       padding: 12px;
-      background: #101018;
+      background: rgba(12, 12, 18, .98);
+      animation: viewer-in .2s ease both;
+    }
+
+    #game-viewer[hidden] {
+      display: none;
     }
 
     .viewer-header {
@@ -236,69 +510,190 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      width: min(1200px, 100%);
+      width: min(var(--content-width), 100%);
       margin: 0 auto 10px;
     }
 
+    .viewer-title-wrap {
+      min-width: 0;
+    }
+
+    .viewer-label {
+      margin: 0 0 2px;
+      color: var(--cyan);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
     #viewer-title {
+      overflow: hidden;
       margin: 0;
       color: var(--lime);
-      font-size: 1.4rem;
+      font-size: 1.35rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .viewer-actions {
       display: flex;
       flex-wrap: wrap;
+      justify-content: flex-end;
       gap: 8px;
     }
 
     .viewer-actions button {
-      padding: 8px 15px;
-      border: 1px solid var(--cyan);
-      border-radius: 8px;
-      background: var(--cyan);
-      color: #11101a;
+      min-height: 40px;
+      padding: 7px 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #1c1a29;
+      color: #fff;
       cursor: pointer;
-      font-size: 1rem;
+      transition: .18s ease;
     }
 
     .viewer-actions button:hover {
-      border-color: var(--lime);
-      background: var(--lime);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .viewer-actions .close-button {
+      border-color: rgba(255, 159, 67, .55);
+      color: var(--orange);
     }
 
     #game-frame {
       flex: 1;
-      width: min(1200px, 100%);
+      width: min(var(--content-width), 100%);
       min-height: 0;
       margin: 0 auto;
-      border: 1px solid rgba(85, 237, 255, .45);
-      border-radius: 10px;
+      border: 1px solid rgba(85, 237, 255, .3);
+      border-radius: 13px;
       background: #000;
     }
 
-    @keyframes title-float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-3px); }
+    .loading-overlay {
+      position: absolute;
+      inset: 67px 12px 12px;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
     }
 
-    @keyframes glowing {
-      0% { background-position: 0 0; }
-      50% { background-position: 400% 0; }
-      100% { background-position: 0 0; }
+    .loading-overlay[hidden] {
+      display: none;
     }
 
-    @media (max-width: 500px) {
-      .game-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    .loading-card {
+      padding: 13px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(16, 16, 24, .94);
+      color: var(--cyan);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+
+    .loading-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 12px var(--lime);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes page-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes viewer-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      50% { opacity: .35; }
+    }
+
+    @media (max-width: 720px) {
+      .top-bar {
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 10px 16px;
       }
 
-      #game-viewer {
-        padding: 8px;
+      .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 40px;
+      }
+
+      .nav-links {
+        display: none;
+        flex-basis: 100%;
+        justify-content: flex-start;
+        padding: 4px 0 2px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-button {
+        padding: 8px 12px;
+      }
+
+      .page {
+        padding: 28px 12px 50px;
+      }
+
+      .tools-panel {
+        grid-template-columns: 1fr;
+        width: min(100%, 440px);
+      }
+
+      #time-box {
+        min-width: 0;
+      }
+
+      .game-grid {
+        width: 96%;
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 12px;
+      }
+
+      .grid-meta {
+        width: 96%;
       }
 
       .viewer-header {
-        flex-wrap: wrap;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .viewer-actions {
+        justify-content: flex-start;
+      }
+
+      .loading-overlay {
+        inset: 115px 12px 12px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .game-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-meta {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
 
@@ -306,6 +701,7 @@
       *,
       *::before,
       *::after {
+        scroll-behavior: auto !important;
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
@@ -313,45 +709,219 @@
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <h1>Lil Stash</h1>
+  <nav class="top-bar" aria-label="Main navigation">
+    <a href="#home" class="brand" data-page="home-page">Lil Stash</a>
+<button class="menu-toggle"
+        id="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-links">
+  Menu
+</button>
 
-    <div class="top-tools">
-      <div id="time-box">
-        <span id="custom-time"></span><br>
-        <span id="custom-date"></span>
-      </div>
+<div class="nav-links" id="nav-links">
+  <button class="nav-button active" type="button" data-page="home-page" aria-current="page">Home</button>
+  <button class="nav-button" type="button" data-page="games-page">Games</button>
+  <button class="nav-button" type="button" data-page="ai-page">AI</button>
+  <button class="nav-button" type="button" data-page="stuff-page">Lil' Stuff</button>
+</div>
 
-      <form id="search-form" role="search">
-        <input id="query" type="search" placeholder="Search games" aria-label="Search games">
-        <button type="submit" aria-label="Search">⌕</button>
-      </form>
+  </nav>
+  <main>
+    <section class="page" id="home-page" aria-labelledby="home-title">
+      <div class="home-content">
+        <p class="eyebrow">Your corner of the internet</p>
+        <h1 class="page-title" id="home-title">Lil Stash</h1>
+        <p>Games, creative tools, and a little bit of everything.</p>
+    <div class="home-actions">
+      <button class="action-link" type="button" data-page="games-page">Explore Games</button>
+      <a class="action-link secondary"
+         href="https://docs.google.com/presentation/d/1i3g9BStu6qTxwda6tlFXu9y0nrXmW4i5hUET43ys0FA/edit?slide=id.p#slide=id.p"
+         target="_blank"
+         rel="noopener noreferrer">
+        Lil' Fun
+      </a>
     </div>
+  </div>
+</section>
 
-    <div class="request-button-wrap">
-      <button id="vote-button" class="vote-button" type="button">Game vote</button>
-    </div>
+<section class="page" id="games-page" aria-labelledby="games-title" hidden>
+  <header class="games-heading">
+    <p class="eyebrow">Pick something and play</p>
+    <h1 class="page-title" id="games-title">Games</h1>
+    <p>Search the collection or browse by category.</p>
   </header>
 
-  <main class="game-grid" id="game-grid"></main>
-
-  <section id="game-viewer" hidden aria-label="Game player">
-    <div class="viewer-header">
-      <h2 id="viewer-title">Game</h2>
-
-      <div class="viewer-actions">
-        <button id="play-fullscreen" type="button">Play Fullscreen!</button>
-        <button id="schoology-button" type="button">Open Schoology</button>
-        <button id="close-viewer" type="button">Close game ✕</button>
-      </div>
+  <div class="tools-panel">
+    <div id="time-box" aria-label="Current local time and date">
+      <span id="custom-time"></span><br>
+      <span id="custom-date"></span>
     </div>
 
-    <iframe id="game-frame" title="Game" allow="fullscreen; autoplay; gamepad"></iframe>
-  </section>
+    <form id="search-form" role="search">
+      <input id="query"
+             type="search"
+             placeholder="Search games..."
+             aria-label="Search games"
+             autocomplete="off">
+      <button type="submit" aria-label="Open first matching game">⌕</button>
+    </form>
+  </div>
 
+  <div class="filter-row" role="group" aria-label="Filter games">
+    <button class="filter-button" type="button" data-category="all" aria-pressed="true">All games</button>
+    <button class="filter-button" type="button" data-category="action" aria-pressed="false">Action</button>
+    <button class="filter-button" type="button" data-category="racing" aria-pressed="false">Racing</button>
+    <button class="filter-button" type="button" data-category="arcade" aria-pressed="false">Arcade</button>
+    <button class="filter-button" type="button" data-category="puzzle" aria-pressed="false">Puzzle</button>
+    <button class="filter-button" type="button" data-category="favorites" aria-pressed="false" id="favorites-filter">★ Favorites</button>
+  </div>
+
+  <div class="grid-meta">
+    <span id="game-count" role="status" aria-live="polite"></span>
+    <button id="vote-button" class="vote-button" type="button">Suggest a game ↗</button>
+  </div>
+
+  <section class="game-grid" id="game-grid" aria-label="Games"></section>
+  <p class="empty-state" id="empty-state" hidden>No games match those filters. Try another search.</p>
+</section>
+
+<section class="page" id="ai-page" aria-labelledby="ai-title" hidden>
+  <section class="content-panel">
+    <p class="eyebrow">Make something new</p>
+    <h1 class="page-title" id="ai-title">AI</h1>
+    <p>Try the AI video generator.</p>
+    <div class="content-links">
+      <a class="stuff-link" href="https://deepai.org/video" target="_blank" rel="noopener noreferrer">
+        AI Video Generator ↗
+      </a>
+    </div>
+  </section>
+</section>
+
+<section class="page" id="stuff-page" aria-labelledby="stuff-title" hidden>
+  <section class="content-panel">
+    <p class="eyebrow">More to explore</p>
+    <h1 class="page-title" id="stuff-title">Lil' Stuff</h1>
+    <p>Choose a link to open:</p>
+
+    <div class="content-links">
+      <a class="stuff-link" href="https://liltok-short-feed.base44.app/" target="_blank" rel="noopener noreferrer">Lil' Tok ↗</a>
+      <a class="stuff-link" href="https://lilchatqwertyuiop.base44.app" target="_blank" rel="noopener noreferrer">Lil' Chat ↗</a>
+      <a class="stuff-link" href="https://chat-lil-spark.base44.app" target="_blank" rel="noopener noreferrer">Lil' AI ↗</a>
+      <a class="stuff-link" href="https://vexai26.base44.app/" target="_blank" rel="noopener noreferrer">Vex ↗</a>
+    </div>
+  </section>
+</section>
+
+  </main>
+  <section id="game-viewer"
+           hidden
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="viewer-title">
+    <div class="viewer-header">
+      <div class="viewer-title-wrap">
+        <p class="viewer-label">Now playing</p>
+        <h2 id="viewer-title">Game</h2>
+      </div>
+  <div class="viewer-actions">
+    <button id="open-fullscreen" type="button">Open in new tab ↗</button>
+    <button id="schoology-button" type="button">Schoology ↗</button>
+    <button id="close-game" class="close-button" type="button">Close ✕</button>
+  </div>
+</div>
+
+<iframe id="game-frame"
+        title="Game"
+        allow="fullscreen; autoplay; gamepad"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+<div class="loading-overlay" id="loading-overlay" aria-live="polite">
+  <div class="loading-card"><span class="loading-dot"></span>Loading game…</div>
+</div>
+
+  </section>
   <script>
+    const games = [
+      ["Retro Bowl", "https://jamesleed119-lgtm.github.io/retro-bowl/", "https://upload.wikimedia.org/wikipedia/en/b/bf/Retro_Bowl_cover.png", "sports"],
+      ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9pU2uryDfUF2zm_Uh9m3kTlYtcilQLrsEw&s", "racing"],
+      ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/", "https://store-images.s-microsoft.com/image/apps.57149.14203359996116878.bf56f333-b9fa-4904-8519-8c12f0adcb59.d545d123-0487-4567-9f3d-feea87e81cf3?h=102", "racing"],
+      ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/", "https://images.seeklogo.com/logo-png/4/1/dvd-logo-png_seeklogo-44518.png", "arcade"],
+      ["Escape Road 2", "https://escape-road-city-2.github.io/", "https://m.media-amazon.com/images/I/41T0f2lRVaL.jpg", "racing"],
+      ["Escape Road 3", "https://giogotaura55-boop.github.io/Escape-Road-map-/", "https://store-images.s-microsoft.com/image/apps.45994.14508553358046994.5f750958-8247-4d67-bad3-91e675b96a47.f5d5e216-d67d-4e7a-9a03-1fd6c2390a11?h=102", "racing"],
+      ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6bihPSNrpWUOKuSm34kfECMclHeixHU5L7w&s", "racing"],
+      ["Drive mad", "https://lilcoder26.github.io/Crazy-ELA/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drive_mad.png", "racing"],
+      ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/", "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png", "arcade"],
+      ["Geometry Dash Breeze", "https://lilcoder26.github.io/Geometry/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPUnf7eng2ZpgWfETYOAoJ8B-zYkN5p-ObGw&s", "arcade"],
+      ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/geometry_dash.png", "arcade"],
+      ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/", "https://icons.appfigures.com/213666962/100.webp", "puzzle"],
+      ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/", "https://avatars.githubusercontent.com/u/178060583?v=4", "racing"],
+      ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drift_hunters.png", "racing"],
+      ["Space Waves", "https://brodyfong8.github.io/Spacewaves/", "https://avatars.githubusercontent.com/u/202609678?v=4", "arcade"],
+      ["Basket Random", "https://junifer-sgs.github.io/basket-random/", "https://avatars.githubusercontent.com/u/203541966?v=4", "sports"],
+      ["Subway Surfers", "https://martinmmcyt.github.io/subway-surfers-classic/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/subway_surfer.png", "action"],
+      ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu8nMnwYbJc_0zuX5U0gIqTeMKGdXIzCiXkg&s", "action"],
+      ["FNAF 2", "https://lilcoder26.github.io/FNAF2/", "https://content.instructables.com/FJQ/RZIP/I5QN039Z/FJQRZIPI5QN039Z.jpg", "action"],
+      ["FNAF 3", "https://lilcoder26.github.io/FNAF3/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyBzne2EEeZnO59s3BPfsf2sXWsT_3g8AeHw&s", "action"],
+      ["FNAF 4", "https://lilcoder26.github.io/FNAF4/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMfEBZiwL8w1TPOm9pjV7BzeVywGvPjD4lNQ&s", "action"],
+      ["Survival Race", "https://gamestreeem.github.io/Survival-race/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/survival_race.png", "racing"],
+      ["Level Devil", "https://taha309.github.io/LevelDevil/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/level_devil.png", "arcade"],
+      ["Dino game", "https://chrisdothtml.github.io/chrome-dino/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/dino_game.png", "arcade"],
+      ["Pac-Man", "https://masonicgit.github.io/pacman/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/pacman.png", "arcade"],
+      ["BitLife", "https://lilcoder26.github.io/bitlife/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bitlife.jpg", "simulation"],
+      ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/basketballstars.png", "sports"],
+      ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bloxorz.png", "puzzle"],
+      ["Clash Royale", "https://brodyfong8.github.io/Clash-Royale-Clone-1/", "https://banner2.cleanpng.com/lnd/20241221/hb/8ce29766430c91c12283f4b6e692a3.webp", "action"],
+      ["OvO", "https://lilcoder26.github.io/OVO/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnOByHmdYzXhM6Z691eeNY0JR3p5k_zUZJtg&s", "arcade"],
+      ["Block Blast", "https://lilcoder26.github.io/Blockblast/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/blockblast.png", "puzzle"],
+      ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/", "https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg", "arcade"],
+      ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/minecraft.svg", "adventure"],
+      ["Brawl Stars", "https://brodyfong8.github.io/Brawl-Simulator-3D/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsJvd8ydXr8FzKyCO_JZr4zrxWIc2gYEqAfg&s", "action"],
+      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/infinite-craft.svg", "puzzle"],
+      ["Henry Stickmin: Breaking the Bank", "https://jackamoe9380.github.io/henry-stickmin-breaking-the-bank/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbVld9b3WeExcBf8Aszloe98Ul0MmSneZgaw&s", "adventure"],
+      ["Henry Stickmin: Escaping the Prison", "https://lilcoder26.github.io/Henry-stickman-collection/escaping-the-prison/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkOgV4RH902vXnpW05NNhbutssEGZ1CPi8fg&s", "adventure"],
+      ["Henry Stickmin: Infiltrating the Airship", "https://lilcoder26.github.io/henry-stickman-infiltrating-the-airship/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs8U93byN3xbt4HWQrzDwhhTsxSGGSXJ-RAQ&s", "adventure"],
+      ["Henry Stickmin: Stealing the Diamond", "https://lilcoder26.github.io/StealingTheDiamond/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6Rd8JcHJiEwM_bC_ljx3b9BAh8wMc2ALnLg&s", "adventure"],
+      ["Henry Stickmin: Fleeing the Complex", "https://lilcoder26.github.io/henry-stickman-fleeing-the-complex/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvK_HMjkOF-RntnGw3tTL3fX9uaL62Go29GQ&s", "adventure"]
+    ];
+
+    const grid = document.getElementById("game-grid");
+    const queryInput = document.getElementById("query");
+    const gameCount = document.getElementById("game-count");
+    const emptyState = document.getElementById("empty-state");
+    const gameViewer = document.getElementById("game-viewer");
+    const gameFrame = document.getElementById("game-frame");
+    const viewerTitle = document.getElementById("viewer-title");
+    const loadingOverlay = document.getElementById("loading-overlay");
+    const closeGameButton = document.getElementById("close-game");
+    const navLinks = document.getElementById("nav-links");
+    const menuToggle = document.getElementById("menu-toggle");
+
+    let selectedCategory = "all";
+    let favorites = loadFavorites();
+    let currentGameUrl = "";
+    let previousFocus = null;
+    let frameLoadTimer;
+
+    function loadFavorites() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("lil-stash-favorites") || "[]");
+        return new Set(Array.isArray(saved) ? saved : []);
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveFavorites() {
+      try {
+        localStorage.setItem("lil-stash-favorites", JSON.stringify([...favorites]));
+      } catch {
+        // Favorites still work for this page session if browser storage is unavailable.
+      }
+    }
+
     function updateClock() {
       const now = new Date();
 
@@ -372,123 +942,226 @@
     }
 
     updateClock();
-    setInterval(updateClock, 1000);
+    window.setInterval(updateClock, 1000);
 
-    // Each game is [name, playable URL, thumbnail URL].
-    const games = [
-      ["Retro Bowl", "https://jamesleed119-lgtm.github.io/retro-bowl/", "https://upload.wikimedia.org/wikipedia/en/b/bf/Retro_Bowl_cover.png"],
-      ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9pU2uryDfUF2zm_Uh9m3kTlYtcilQLrsEw&s"],
-      ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/", "https://store-images.s-microsoft.com/image/apps.57149.14203359996116878.bf56f333-b9fa-4904-8519-8c12f0adcb59.d545d123-0487-4567-9f3d-feea87e81cf3?h=102"],
-      ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/", "https://images.seeklogo.com/logo-png/4/1/dvd-logo-png_seeklogo-44518.png"],
-      ["Escape Road 2", "https://escape-road-city-2.github.io/", "https://m.media-amazon.com/images/I/41T0f2lRVaL.jpg"],
-      ["Escape Road 3", "https://giogotaura55-boop.github.io/Escape-Road-map-/", "https://store-images.s-microsoft.com/image/apps.45994.14508553358046994.5f750958-8247-4d67-bad3-91e675b96a47.f5d5e216-d67d-4e7a-9a03-1fd6c2390a11?h=102"],
-      ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6bihPSNrpWUOKuSm34kfECMclHeixHU5L7w&s"],
-      ["Drive mad", "https://lilcoder26.github.io/Crazy-ELA/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drive_mad.png"],
-      ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/", "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png"],
-      ["Geometry Dash Breeze", "https://lilcoder26.github.io/Geometry/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPUnf7eng2ZpgWfETYOAoJ8B-zYkN5p-ObGw&s"],
-      ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/geometry_dash.png"],
-      ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/", "https://icons.appfigures.com/213666962/100.webp"],
-      ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/", "https://avatars.githubusercontent.com/u/178060583?v=4"],
-      ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drift_hunters.png"],
-      ["Space Waves", "https://brodyfong8.github.io/Spacewaves/", "https://avatars.githubusercontent.com/u/202609678?v=4"],
-      ["Basket Random", "https://junifer-sgs.github.io/basket-random/", "https://avatars.githubusercontent.com/u/203541966?v=4"],
-      ["Subway Surfers", "https://martinmmcyt.github.io/subway-surfers-classic/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/subway_surfer.png"],
-      ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu8nMnwYbJc_0zuX5U0gIqTeMKGdXIzCiXkg&s"],
-      ["FNAF 2", "https://lilcoder26.github.io/FNAF2/", "https://content.instructables.com/FJQ/RZIP/I5QN039Z/FJQRZIPI5QN039Z.jpg?_gl=1*8c0yzv*_ga*Nzg2MTUwODg3LjE3OTU0NzM2OTIkbzEkZzEkdDE3OTU0NzM2OTIkajYwJGwwJGgw"],
-      ["FNAF 3", "https://lilcoder26.github.io/FNAF3/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyBzne2EEeZnO59s3BPfsf2sXWsT_3g8AeHw&s"],
-      ["FNAF 4", "https://lilcoder26.github.io/FNAF4/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMfEBZiwL8w1TPOm9pjV7BzeVywGvPjD4lNQ&s"],
-      ["Survival Race", "https://gamestreeem.github.io/Survival-race/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/survival_race.png"],
-      ["Level Devil", "https://taha309.github.io/LevelDevil/", "data:image/jpeg;base64,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"],
-      ["Dino game", "https://chrisdothtml.github.io/chrome-dino/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/dino_game.png"],
-      ["Pac-Man", "https://masonicgit.github.io/pacman/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/pacman.png"],
-      ["BitLife", "https://lilcoder26.github.io/bitlife/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bitlife.jpg"],
-      ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/basketballstars.png"],
-      ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bloxorz.png"],
-      ["Clash Royale", "https://brodyfong8.github.io/Clash-Royale-Clone-1/", "https://banner2.cleanpng.com/lnd/20241221/hb/8ce29766430c91c12283f4b6e692a3.webp"],
-      ["OvO", "https://lilcoder26.github.io/OVO/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnOByHmdYzXhM6Z691eeNY0JR3p5k_zUZJtg&s"],
-      ["Block Blast", "https://lilcoder26.github.io/Blockblast/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/blockblast.png"],
-      ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/", "https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original"],
-      ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/minecraft.svg"],
-      ["Brawl Stars", "https://brodyfong8.github.io/Brawl-Simulator-3D/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsJvd8ydXr8FzKyCO_JZr4zrxWIc2gYEqAfg&s"],
-      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/infinite-craft.svg"],
-      ["Henry Stickmin: Breaking the Bank", "https://jackamoe9380.github.io/henry-stickmin-breaking-the-bank/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbVld9b3WeExcBf8Aszloe98Ul0MmSneZgaw&s"],
-      ["Henry Stickmin: Escaping the Prison", "https://lilcoder26.github.io/Henry-stickman-collection/escaping-the-prison/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkOgV4RH902vXnpW05NNhbutssEGZ1CPi8fg&s"],
-      ["Henry Stickmin: Fleeing the Complex", "https://lilcoder26.github.io/henry-stickman-fleeing-the-complex/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvK_HMjkOF-RntnGw3tTL3fX9uaL62Go29GQ&s"],
-      ["Henry Stickmin: Infiltrating the Airship", "https://lilcoder26.github.io/henry-stickmin-infiltrating-the-airship/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs8U93byN3xbt4HWQrzDwhhTsxSGGSXJ-RAQ&s"],
-      ["Henry Stickmin: Stealing the Diamond", "https://lilcoder26.github.io/StealingTheDiamond/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6Rd8JcHJiEwM_bC_ljx3b9BAh8wMc2ALnLg&s"]
-    ];
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.hidden = page.id !== pageId;
+      });
 
-    const grid = document.getElementById("game-grid");
-    const searchForm = document.getElementById("search-form");
-    const searchInput = document.getElementById("query");
-    const gameViewer = document.getElementById("game-viewer");
-    const gameFrame = document.getElementById("game-frame");
-    const viewerTitle = document.getElementById("viewer-title");
-    const fullscreenButton = document.getElementById("play-fullscreen");
+      document.querySelectorAll(".nav-button").forEach(button => {
+        const current = button.dataset.page === pageId;
+        button.classList.toggle("active", current);
 
-    let currentGame = null;
-    let fullscreenTab = null;
+        if (current) {
+          button.setAttribute("aria-current", "page");
+        } else {
+          button.removeAttribute("aria-current");
+        }
+      });
 
-    function playInBox(name, url) {
-      currentGame = { name, url };
-      fullscreenTab = null;
+      navLinks.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelectorAll("[data-page]").forEach(control => {
+      control.addEventListener("click", event => {
+        event.preventDefault();
+        showPage(control.dataset.page);
+      });
+    });
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    function categoryMatches(gameCategory, selected) {
+      if (selected === "all") return true;
+      if (selected === "action") return gameCategory === "action";
+      if (selected === "racing") return gameCategory === "racing";
+      if (selected === "arcade") return gameCategory === "arcade";
+      if (selected === "puzzle") return gameCategory === "puzzle";
+      return true;
+    }
+
+    function createGameCard([name, url, imageUrl, category]) {
+      const card = document.createElement("article");
+      card.className = "game-card";
+      card.tabIndex = 0;
+      card.dataset.name = name.toLowerCase();
+      card.dataset.category = category;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `Play ${name}`);
+
+      const thumbWrap = document.createElement("div");
+      thumbWrap.className = "thumb-wrap";
+
+      const image = document.createElement("img");
+      image.className = "game-thumbnail";
+      image.src = imageUrl;
+      image.alt = "";
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.onerror = () => {
+        const fallback = document.createElement("div");
+        fallback.className = "image-fallback";
+        fallback.textContent = name.slice(0, 1).toUpperCase();
+        fallback.setAttribute("aria-hidden", "true");
+        image.replaceWith(fallback);
+      };
+      thumbWrap.appendChild(image);
+
+      const favoriteButton = document.createElement("button");
+      favoriteButton.className = "favorite-button";
+      favoriteButton.type = "button";
+      favoriteButton.setAttribute("aria-label", `Add ${name} to favorites`);
+      favoriteButton.setAttribute("aria-pressed", String(favorites.has(name)));
+      favoriteButton.textContent = favorites.has(name) ? "★" : "☆";
+      favoriteButton.addEventListener("click", event => {
+        event.stopPropagation();
+
+        if (favorites.has(name)) {
+          favorites.delete(name);
+        } else {
+          favorites.add(name);
+        }
+
+        saveFavorites();
+        favoriteButton.setAttribute("aria-pressed", String(favorites.has(name)));
+        favoriteButton.setAttribute(
+          "aria-label",
+          `${favorites.has(name) ? "Remove" : "Add"} ${name} ${favorites.has(name) ? "from" : "to"} favorites`
+        );
+        favoriteButton.textContent = favorites.has(name) ? "★" : "☆";
+        filterGames();
+      });
+      thumbWrap.appendChild(favoriteButton);
+
+      const label = document.createElement("span");
+      label.className = "game-name";
+      label.textContent = name;
+
+      card.append(thumbWrap, label);
+      card.addEventListener("click", () => openGame(name, url, card));
+      card.addEventListener("keydown", event => {
+        if (event.target !== card) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openGame(name, url, card);
+        }
+      });
+
+      return card;
+    }
+
+    games.forEach(game => grid.appendChild(createGameCard(game)));
+
+    function filterGames() {
+      const search = queryInput.value.trim().toLowerCase();
+      let visible = 0;
+
+      grid.querySelectorAll(".game-card").forEach(card => {
+        const matchesSearch = card.dataset.name.includes(search);
+        const matchesCategory = categoryMatches(card.dataset.category, selectedCategory);
+        const matchesFavorite =
+          selectedCategory !== "favorites" || favorites.has(
+            games.find(game => game[0].toLowerCase() === card.dataset.name)?.[0]
+          );
+
+        const show = matchesSearch && matchesCategory && matchesFavorite;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+
+      gameCount.textContent = `${visible} ${visible === 1 ? "game" : "games"}`;
+      emptyState.hidden = visible > 0;
+    }
+
+    document.querySelectorAll(".filter-button").forEach(button => {
+      button.addEventListener("click", () => {
+        selectedCategory = button.dataset.category;
+
+        document.querySelectorAll(".filter-button").forEach(item => {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+
+        filterGames();
+      });
+    });
+
+    queryInput.addEventListener("input", filterGames);
+
+    document.getElementById("search-form").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const search = queryInput.value.trim().toLowerCase();
+      if (!search) return;
+
+      const match = games.find(([name]) => name.toLowerCase().includes(search));
+      if (match) {
+        const card = [...grid.querySelectorAll(".game-card")]
+          .find(item => item.dataset.name === match[0].toLowerCase());
+        openGame(match[0], match[1], card || queryInput);
+      } else {
+        filterGames();
+      }
+    });
+
+    function openGame(name, url, trigger) {
+      previousFocus = trigger || document.activeElement;
+      currentGameUrl = url;
       viewerTitle.textContent = name;
-      gameFrame.src = url;
-      fullscreenButton.textContent = "Play Fullscreen!";
+      gameFrame.title = `${name} game`;
+      loadingOverlay.hidden = false;
       gameViewer.hidden = false;
-      document.body.style.overflow = "hidden";
+      document.body.classList.add("viewer-open");
+
+      window.clearTimeout(frameLoadTimer);
+      gameFrame.src = url;
+      closeGameButton.focus();
+
+      frameLoadTimer = window.setTimeout(() => {
+        loadingOverlay.hidden = true;
+      }, 9000);
     }
 
-    function playFullscreen() {
-      if (!currentGame) return;
-
-      if (fullscreenTab && !fullscreenTab.closed) {
-        fullscreenTab.focus();
-        return;
-      }
-
-      const gameTab = window.open("about:blank", "_blank");
-
-      if (!gameTab) {
-        alert("Please allow pop-ups for this site.");
-        return;
-      }
-
-      fullscreenTab = gameTab;
-      gameTab.document.title = currentGame.name;
-      gameTab.document.documentElement.style.cssText = "height:100%;margin:0";
-      gameTab.document.body.style.cssText =
-        "height:100vh;margin:0;overflow:hidden;background:#000";
-
-      const frame = gameTab.document.createElement("iframe");
-      frame.src = currentGame.url;
-      frame.title = currentGame.name;
-      frame.allow = "fullscreen; autoplay; gamepad";
-      frame.style.cssText = "border:none;width:100%;height:100%;display:block";
-
-      gameTab.document.body.appendChild(frame);
-      gameTab.focus();
-      fullscreenButton.textContent = "Page Opened!";
-    }
+    gameFrame.addEventListener("load", () => {
+      window.clearTimeout(frameLoadTimer);
+      loadingOverlay.hidden = true;
+    });
 
     function closeGame() {
+      if (gameViewer.hidden) return;
+
+      window.clearTimeout(frameLoadTimer);
       gameFrame.src = "about:blank";
+      loadingOverlay.hidden = true;
       gameViewer.hidden = true;
-      document.body.style.overflow = "";
-      currentGame = null;
-      fullscreenTab = null;
-      fullscreenButton.textContent = "Play Fullscreen!";
+      document.body.classList.remove("viewer-open");
+      currentGameUrl = "";
+
+      if (previousFocus && typeof previousFocus.focus === "function") {
+        previousFocus.focus();
+      }
+      previousFocus = null;
     }
 
-    fullscreenButton.addEventListener("click", playFullscreen);
-    document.getElementById("close-viewer").addEventListener("click", closeGame);
+    closeGameButton.addEventListener("click", closeGame);
+
+    document.getElementById("open-fullscreen").addEventListener("click", () => {
+      if (currentGameUrl) {
+        window.open(currentGameUrl, "_blank", "noopener,noreferrer");
+      }
+    });
 
     document.getElementById("schoology-button").addEventListener("click", () => {
-      window.open(
-        "https://centennial.schoology.com/home",
-        "_blank",
-        "noopener,noreferrer"
-      );
+      window.open("https://centennial.schoology.com/home", "_blank", "noopener,noreferrer");
+    });
+
+    document.getElementById("vote-button").addEventListener("click", () => {
+      window.open("https://forms.gle/EX4ca1BmsJTZAuBd8", "_blank", "noopener,noreferrer");
     });
 
     document.addEventListener("keydown", event => {
@@ -497,61 +1170,7 @@
       }
     });
 
-    for (const [name, url, imageUrl] of games) {
-      const card = document.createElement("article");
-      card.className = "game-item";
-      card.dataset.gameName = name.toLowerCase();
-      card.tabIndex = 0;
-      card.setAttribute("role", "button");
-      card.setAttribute("aria-label", `Play ${name}`);
-
-      if (imageUrl) {
-        const image = document.createElement("img");
-        image.className = "game-thumbnail";
-        image.src = imageUrl;
-        image.alt = `${name} thumbnail`;
-        image.loading = "lazy";
-        card.appendChild(image);
-      }
-
-      const gameName = document.createElement("span");
-      gameName.className = "game-name";
-      gameName.textContent = name;
-      card.appendChild(gameName);
-
-      card.addEventListener("click", () => playInBox(name, url));
-
-      card.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          playInBox(name, url);
-        }
-      });
-
-      grid.appendChild(card);
-    }
-
-    searchInput.addEventListener("input", () => {
-      const search = searchInput.value.trim().toLowerCase();
-
-      for (const card of grid.querySelectorAll(".game-item")) {
-        card.hidden = !card.dataset.gameName.includes(search);
-      }
-    });
-
-    searchForm.addEventListener("submit", event => {
-      event.preventDefault();
-      const search = searchInput.value.trim().toLowerCase();
-      if (!search) return;
-
-      const match = games.find(([name]) => name.toLowerCase().includes(search));
-      if (match) playInBox(match[0], match[1]);
-    });
-
-    document.getElementById("vote-button").addEventListener("click", () => {
-      const voteTab = window.open("https://forms.gle/EX4ca1BmsJTZAuBd8", "_blank");
-      if (voteTab) voteTab.focus();
-    });
+    filterGames();
   </script>
 </body>
 </html>
