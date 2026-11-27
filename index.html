@@ -210,6 +210,11 @@
       color: var(--cyan);
     }
 
+    .games-heading {
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
     .top-tools {
       display: flex;
       flex-wrap: wrap;
@@ -274,17 +279,60 @@
       font-size: 1.5rem;
     }
 
-    .request-button-wrap {
-      margin: 15px auto 0;
-      text-align: center;
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin: 20px auto 12px;
+    }
+
+    .filter-button {
+      padding: 8px 14px;
+      border: 1px solid rgba(85, 237, 255, .35);
+      border-radius: 999px;
+      background: rgba(28, 26, 41, .88);
+      color: #fff;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+    }
+
+    .filter-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .filter-button[aria-pressed="true"] {
+      border-color: var(--lime);
+      background: var(--lime);
+      color: #11101a;
+    }
+
+    .filter-button.favorites-filter[aria-pressed="true"] {
+      border-color: var(--yellow);
+      background: var(--yellow);
+      color: #11101a;
+    }
+
+    .grid-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: min(90%, var(--content-width));
+      margin: 0 auto 12px;
+      color: var(--muted);
+      font-size: .9rem;
     }
 
     .vote-button {
-      padding: 9px 20px;
+      padding: 9px 16px;
       border: 1px solid var(--lime);
       border-radius: 10px;
-      background: #111;
-      color: #fff;
+      background: rgba(201, 255, 56, .08);
+      color: var(--lime);
       cursor: pointer;
       transition: background .18s ease, color .18s ease;
     }
@@ -306,7 +354,7 @@
       grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
       gap: 17px;
       width: min(90%, var(--content-width));
-      margin: 20px auto 0;
+      margin: 0 auto;
     }
 
     .game-item {
@@ -564,6 +612,10 @@
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       }
 
+      .grid-meta {
+        width: 96%;
+      }
+
       .viewer-header {
         align-items: flex-start;
         flex-wrap: wrap;
@@ -577,6 +629,11 @@
 
       .ai-card {
         min-height: 120px;
+      }
+
+      .grid-meta {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
 
@@ -648,12 +705,23 @@
     </form>
   </div>
 
-  <p id="search-status" class="search-status" role="status" aria-live="polite" hidden></p>
+  <div class="filter-row" role="group" aria-label="Sort games by category">
+    <button class="filter-button" type="button" data-category="all" aria-pressed="true">All Games</button>
+    <button class="filter-button" type="button" data-category="action" aria-pressed="false">Action</button>
+    <button class="filter-button" type="button" data-category="racing" aria-pressed="false">Racing</button>
+    <button class="filter-button" type="button" data-category="arcade" aria-pressed="false">Arcade</button>
+    <button class="filter-button" type="button" data-category="puzzle" aria-pressed="false">Puzzle</button>
+    <button class="filter-button" type="button" data-category="sports" aria-pressed="false">Sports</button>
+    <button class="filter-button" type="button" data-category="adventure" aria-pressed="false">Adventure</button>
+    <button class="filter-button favorites-filter" type="button" data-category="favorites" aria-pressed="false">★ Favorites</button>
+  </div>
 
-  <div class="request-button-wrap">
+  <div class="grid-meta">
+    <span id="game-count" role="status" aria-live="polite"></span>
     <button id="vote-button" class="vote-button" type="button">Game vote ↗</button>
   </div>
 
+  <p id="search-status" class="search-status" role="status" aria-live="polite" hidden></p>
   <section class="game-grid" id="game-grid" aria-label="Games"></section>
 </section>
 
@@ -790,52 +858,53 @@
     window.setInterval(updateClock, 1000);
 
     const games = [
-      ["Retro Bowl", "https://jamesleed119-lgtm.github.io/retro-bowl/", "https://upload.wikimedia.org/wikipedia/en/b/bf/Retro_Bowl_cover.png"],
-      ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9pU2uryDfUF2zm_Uh9m3kTlYtcilQLrsEw&s"],
-      ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/", "https://store-images.s-microsoft.com/image/apps.57149.14203359996116878.bf56f333-b9fa-4904-8519-8c12f0adcb59.d545d123-0487-4567-9f3d-feea87e81cf3?h=102"],
-      ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/", "https://images.seeklogo.com/logo-png/4/1/dvd-logo-png_seeklogo-44518.png"],
-      ["Escape Road 2", "https://escape-road-city-2.github.io/", "https://m.media-amazon.com/images/I/41T0f2lRVaL.jpg"],
-      ["Escape Road 3", "https://giogotaura55-boop.github.io/Escape-Road-map-/", "https://store-images.s-microsoft.com/image/apps.45994.14508553358046994.5f750958-8247-4d67-bad3-91e675b96a47.f5d5e216-d67d-4e7a-9a03-1fd6c2390a11?h=102"],
-      ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6bihPSNrpWUOKuSm34kfECMclHeixHU5L7w&s"],
-      ["Drive mad", "https://lilcoder26.github.io/Crazy-ELA/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drive_mad.png"],
-      ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/", "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png"],
-      ["Geometry Dash Breeze", "https://lilcoder26.github.io/Geometry/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPUnf7eng2ZpgWfETYOAoJ8B-zYkN5p-ObGw&s"],
-      ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/geometry_dash.png"],
-      ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/", "https://icons.appfigures.com/213666962/100.webp"],
-      ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/", "https://avatars.githubusercontent.com/u/178060583?v=4"],
-      ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drift_hunters.png"],
-      ["Space Waves", "https://brodyfong8.github.io/Spacewaves/", "https://avatars.githubusercontent.com/u/202609678?v=4"],
-      ["Basket Random", "https://junifer-sgs.github.io/basket-random/", "https://avatars.githubusercontent.com/u/203541966?v=4"],
-      ["Subway Surfers", "https://martinmmcyt.github.io/subway-surfers-classic/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/subway_surfer.png"],
-      ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu8nMnwYbJc_0zuX5U0gIqTeMKGdXIzCiXkg&s"],
-      ["FNAF 2", "https://lilcoder26.github.io/FNAF2/", "https://content.instructables.com/FJQ/RZIP/I5QN039Z/FJQRZIPI5QN039Z.jpg"],
-      ["FNAF 3", "https://lilcoder26.github.io/FNAF3/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyBzne2EEeZnO59s3BPfsf2sXWsT_3g8AeHw&s"],
-      ["FNAF 4", "https://lilcoder26.github.io/FNAF4/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMfEBZiwL8w1TPOm9pjV7BzeVywGvPjD4lNQ&s"],
-      ["Survival Race", "https://gamestreeem.github.io/Survival-race/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/survival_race.png"],
-      ["Level Devil", "https://taha309.github.io/LevelDevil/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/level_devil.png"],
-      ["Dino game", "https://chrisdothtml.github.io/chrome-dino/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/dino_game.png"],
-      ["Pac-Man", "https://masonicgit.github.io/pacman/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/pacman.png"],
-      ["BitLife", "https://lilcoder26.github.io/bitlife/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bitlife.jpg"],
-      ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/basketballstars.png"],
-      ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bloxorz.png"],
-      ["Clash Royale", "https://brodyfong8.github.io/Clash-Royale-Clone-1/", "https://banner2.cleanpng.com/lnd/20241221/hb/8ce29766430c91c12283f4b6e692a3.webp"],
-      ["OvO", "https://lilcoder26.github.io/OVO/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnOByHmdYzXhM6Z691eeNY0JR3p5k_zUZJtg&s"],
-      ["Block Blast", "https://lilcoder26.github.io/Blockblast/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/blockblast.png"],
-      ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/", "https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg"],
-      ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/minecraft.svg"],
-      ["Brawl Stars", "https://brodyfong8.github.io/Brawl-Simulator-3D/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsJvd8ydXr8FzKyCO_JZr4zrxWIc2gYEqAfg&s"],
-      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/infinite-craft.svg"],
-      ["Henry Stickmin: Breaking the Bank", "https://jackamoe9380.github.io/henry-stickmin-breaking-the-bank/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbVld9b3WeExcBf8Aszloe98Ul0MmSneZgaw&s"],
-      ["Henry Stickmin: Escaping the Prison", "https://lilcoder26.github.io/Henry-stickman-collection/escaping-the-prison/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkOgV4RH902vXnpW05NNhbutssEGZ1CPi8fg&s"],
-      ["Henry Stickmin: Infiltrating the Airship", "https://lilcoder26.github.io/henry-stickman-infiltrating-the-airship/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs8U93byN3xbt4HWQrzDwhhTsxSGGSXJ-RAQ&s"],
-      ["Henry Stickmin: Stealing the Diamond", "https://lilcoder26.github.io/StealingTheDiamond/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6Rd8JcHJiEwM_bC_ljx3b9BAh8wMc2ALnLg&s"],
-      ["Henry Stickmin: Fleeing the Complex", "https://lilcoder26.github.io/henry-stickman-fleeing-the-complex/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvK_HMjkOF-RntnGw3tTL3fX9uaL62Go29GQ&s"]
+      ["Retro Bowl", "https://jamesleed119-lgtm.github.io/retro-bowl/", "https://upload.wikimedia.org/wikipedia/en/b/bf/Retro_Bowl_cover.png", "sports"],
+      ["Eggy Car", "https://supreme-s-alt.github.io/Eggy-car/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9pU2uryDfUF2zm_Uh9m3kTlYtcilQLrsEw&s", "racing"],
+      ["Moto X3M", "https://dopdib999-svg.github.io/moto_x3m/", "https://store-images.s-microsoft.com/image/apps.57149.14203359996116878.bf56f333-b9fa-4904-8519-8c12f0adcb59.d545d123-0487-4567-9f3d-feea87e81cf3?h=102", "racing"],
+      ["DVD Logo Game", "https://aidanspeakss.github.io/dvd-logo-game/", "https://images.seeklogo.com/logo-png/4/1/dvd-logo-png_seeklogo-44518.png", "arcade"],
+      ["Escape Road 2", "https://escape-road-city-2.github.io/", "https://m.media-amazon.com/images/I/41T0f2lRVaL.jpg", "racing"],
+      ["Escape Road 3", "https://giogotaura55-boop.github.io/Escape-Road-map-/", "https://store-images.s-microsoft.com/image/apps.45994.14508553358046994.5f750958-8247-4d67-bad3-91e675b96a47.f5d5e216-d67d-4e7a-9a03-1fd6c2390a11?h=102", "racing"],
+      ["Dri1V3ng Wild", "https://killedbyapixel.github.io/Drive13K/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6bihPSNrpWUOKuSm34kfECMclHeixHU5L7w&s", "racing"],
+      ["Drive mad", "https://lilcoder26.github.io/Crazy-ELA/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drive_mad.png", "racing"],
+      ["Temu Flappy Bird", "https://pixel-flap.edgeone.dev/", "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png", "arcade"],
+      ["Geometry Dash Breeze", "https://lilcoder26.github.io/Geometry/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPUnf7eng2ZpgWfETYOAoJ8B-zYkN5p-ObGw&s", "arcade"],
+      ["Geometry Dash Lite", "https://mecanixcreations.github.io/GeometryDashLite-unity-web/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/geometry_dash.png", "arcade"],
+      ["Candy Crush", "https://brodyfong8.github.io/CandyCrush/", "https://icons.appfigures.com/213666962/100.webp", "puzzle"],
+      ["Drift Boss", "https://everybodytesting.github.io/DriftBoss/", "https://avatars.githubusercontent.com/u/178060583?v=4", "racing"],
+      ["Drift Hunters", "https://cheeset-idk.github.io/Drift-Hunters/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/drift_hunters.png", "racing"],
+      ["Space Waves", "https://brodyfong8.github.io/Spacewaves/", "https://avatars.githubusercontent.com/u/202609678?v=4", "arcade"],
+      ["Basket Random", "https://junifer-sgs.github.io/basket-random/", "https://avatars.githubusercontent.com/u/203541966?v=4", "sports"],
+      ["Subway Surfers", "https://martinmmcyt.github.io/subway-surfers-classic/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/subway_surfer.png", "action"],
+      ["Five Nights at Freddy's", "https://lilcoder26.github.io/fafn/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu8nMnwYbJc_0zuX5U0gIqTeMKGdXIzCiXkg&s", "action"],
+      ["FNAF 2", "https://lilcoder26.github.io/FNAF2/", "https://content.instructables.com/FJQ/RZIP/I5QN039Z/FJQRZIPI5QN039Z.jpg", "action"],
+      ["FNAF 3", "https://lilcoder26.github.io/FNAF3/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyBzne2EEeZnO59s3BPfsf2sXWsT_3g8AeHw&s", "action"],
+      ["FNAF 4", "https://lilcoder26.github.io/FNAF4/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMfEBZiwL8w1TPOm9pjV7BzeVywGvPjD4lNQ&s", "action"],
+      ["Survival Race", "https://gamestreeem.github.io/Survival-race/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/survival_race.png", "racing"],
+      ["Level Devil", "https://taha309.github.io/LevelDevil/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/level_devil.png", "arcade"],
+      ["Dino game", "https://chrisdothtml.github.io/chrome-dino/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/dino_game.png", "arcade"],
+      ["Pac-Man", "https://masonicgit.github.io/pacman/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/pacman.png", "arcade"],
+      ["BitLife", "https://lilcoder26.github.io/bitlife/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bitlife.jpg", "simulation"],
+      ["Basketball Stars 2026", "https://brodyfong8.github.io/Basketball-Stars-2026/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/basketballstars.png", "sports"],
+      ["Bloxorz", "https://j3244493-jpg.github.io/Bloxors/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/bloxorz.png", "puzzle"],
+      ["Clash Royale", "https://brodyfong8.github.io/Clash-Royale-Clone-1/", "https://banner2.cleanpng.com/lnd/20241221/hb/8ce29766430c91c12283f4b6e692a3.webp", "action"],
+      ["OvO", "https://lilcoder26.github.io/OVO/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnOByHmdYzXhM6Z691eeNY0JR3p5k_zUZJtg&s", "arcade"],
+      ["Block Blast", "https://lilcoder26.github.io/Blockblast/", "https://cdn.jsdelivr.net/gh/arcade-v/images/games/blockblast.png", "puzzle"],
+      ["Crossy Road", "https://brodyfong8.github.io/thecrossyroad/", "https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg", "arcade"],
+      ["Eaglercraft", "https://ninjinboys.github.io/eaglecraft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/minecraft.svg", "adventure"],
+      ["Brawl Stars", "https://brodyfong8.github.io/Brawl-Simulator-3D/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsJvd8ydXr8FzKyCO_JZr4zrxWIc2gYEqAfg&s", "action"],
+      ["Infinite Craft", "https://brodyfong8.github.io/Infinite-Craft/", "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/infinite-craft.svg", "puzzle"],
+      ["Henry Stickmin: Breaking the Bank", "https://jackamoe9380.github.io/henry-stickmin-breaking-the-bank/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbVld9b3WeExcBf8Aszloe98Ul0MmSneZgaw&s", "adventure"],
+      ["Henry Stickmin: Escaping the Prison", "https://lilcoder26.github.io/Henry-stickman-collection/escaping-the-prison/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkOgV4RH902vXnpW05NNhbutssEGZ1CPi8fg&s", "adventure"],
+      ["Henry Stickmin: Infiltrating the Airship", "https://lilcoder26.github.io/henry-stickman-infiltrating-the-airship/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs8U93byN3xbt4HWQrzDwhhTsxSGGSXJ-RAQ&s", "adventure"],
+      ["Henry Stickmin: Stealing the Diamond", "https://lilcoder26.github.io/StealingTheDiamond/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6Rd8JcHJiEwM_bC_ljx3b9BAh8wMc2ALnLg&s", "adventure"],
+      ["Henry Stickmin: Fleeing the Complex", "https://lilcoder26.github.io/henry-stickman-fleeing-the-complex/", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvK_HMjkOF-RntnGw3tTL3fX9uaL62Go29GQ&s", "adventure"]
     ];
 
     const grid = document.getElementById("game-grid");
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("query");
     const searchStatus = document.getElementById("search-status");
+    const gameCount = document.getElementById("game-count");
     const gameViewer = document.getElementById("game-viewer");
     const gameFrame = document.getElementById("game-frame");
     const viewerTitle = document.getElementById("viewer-title");
@@ -843,6 +912,7 @@
 
     let currentGameUrl = "";
     let previousFocus = null;
+    let selectedCategory = "all";
 
     function updateClock() {
       const now = new Date();
@@ -914,6 +984,7 @@
       if (previousFocus && typeof previousFocus.focus === "function") {
         previousFocus.focus();
       }
+
       previousFocus = null;
     }
 
@@ -947,10 +1018,17 @@
       }
     });
 
-    for (const [name, url, imageUrl] of games) {
+    function categoryMatches(gameCategory, selected) {
+      if (selected === "all") return true;
+      if (selected === "favorites") return false;
+      return gameCategory === selected;
+    }
+
+    for (const [name, url, imageUrl, category] of games) {
       const card = document.createElement("article");
       card.className = "game-item";
       card.dataset.gameName = name.toLowerCase();
+      card.dataset.category = category;
       card.tabIndex = 0;
       card.setAttribute("role", "button");
       card.setAttribute("aria-label", `Play ${name}`);
@@ -985,20 +1063,43 @@
 
     function filterGames() {
       const search = searchInput.value.trim().toLowerCase();
-      const cards = [...grid.querySelectorAll(".game-item")];
       let visibleCount = 0;
 
-      for (const card of cards) {
-        const isVisible = card.dataset.gameName.includes(search);
-        card.hidden = !isVisible;
-        if (isVisible) visibleCount++;
+      for (const card of grid.querySelectorAll(".game-item")) {
+        const matchesSearch = card.dataset.gameName.includes(search);
+        const matchesCategory = categoryMatches(
+          card.dataset.category,
+          selectedCategory
+        );
+        const visible = matchesSearch && matchesCategory;
+
+        card.hidden = !visible;
+        if (visible) visibleCount++;
       }
+
+      gameCount.textContent =
+        `${visibleCount} ${visibleCount === 1 ? "game" : "games"}`;
 
       searchStatus.hidden = visibleCount > 0;
       searchStatus.textContent = search
-        ? `No games found for “${searchInput.value.trim()}”.`
-        : "";
+        ? `No games found for “${searchInput.value.trim()}” in this category.`
+        : "No games in this category yet.";
     }
+
+    document.querySelectorAll(".filter-button").forEach(button => {
+      button.addEventListener("click", () => {
+        selectedCategory = button.dataset.category;
+
+        document.querySelectorAll(".filter-button").forEach(filterButton => {
+          filterButton.setAttribute(
+            "aria-pressed",
+            String(filterButton === button)
+          );
+        });
+
+        filterGames();
+      });
+    });
 
     searchInput.addEventListener("input", filterGames);
 
@@ -1008,7 +1109,10 @@
       const search = searchInput.value.trim().toLowerCase();
       if (!search) return;
 
-      const match = games.find(([name]) => name.toLowerCase().includes(search));
+      const match = games.find(([name]) =>
+        name.toLowerCase().includes(search)
+      );
+
       if (!match) {
         filterGames();
         return;
@@ -1019,6 +1123,8 @@
 
       openGame(match[0], match[1], card || searchInput);
     });
+
+    filterGames();
   </script>
 </body>
 </html>
